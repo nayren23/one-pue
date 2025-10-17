@@ -1,0 +1,29 @@
+version: '3.5'
+services:
+  prometheus:
+    image: prom/prometheus:v3.6.0
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - metrics
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
+  
+  grafana:
+    image: grafana/grafana-oss:12.2.0-17142428006
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana.ini:/etc/grafana/grafana.ini
+    ports:
+      - "3030:3030"
+    networks:
+      - metrics
+
+volumes:
+  grafana_data: {}
+
+networks:
+  metrics:
+    driver: bridge
