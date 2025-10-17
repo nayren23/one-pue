@@ -18,7 +18,10 @@ MODBUS_PORT = 502
 MODBUS_UNIT_ID = 1
 POWER_AVERAGE = 450
 POWER_BASE_VALUE = POWER_AVERAGE * 24 * 365
-REGISTRE_ENERGIE = 1000
+# Size: 32 bits
+REGISTRE_ENERGIE = 0x4D83
+# Size: 16 bits
+REGISTRE_ENERGIE_FRAC = 0x4D85
 
 # ---------- Sender Bot Class ------------ #
 
@@ -46,26 +49,49 @@ class SenderBot:
             f"  Data registers: {len(self.data_registers)}"
         )
 
-    def float_to_modbus_registers(float_value):
+    def float_to_modbus_registers(self, float_value) -> DataHandler.Return:
         """Convertit un float 32-bit en deux mots (registres Modbus) - Big Endian"""
         # 'f': float 32 bits, '>': Big-Endian
         four_bytes = struct.pack('>f', float_value)
         # Décomposer les 4 octets en 2 entiers de 16 bits
-        reg1 = struct.unpack('>H', four_bytes[0:2])[0]
-        reg2 = struct.unpack('>H', four_bytes[2:4])[0]
-        return [reg1, reg2]
+        reg1, reg2 = struct.unpack('>HH', four_bytes)
+        print(reg1, reg2)
+        print(bin(reg1), bin(reg2))
+        return DataHandler.Return(0, [reg1, reg2])
+    
+    def u32_to_modbus_registers(self, u32_value) -> DataHandler.Return:
+        """Convertit un entier non signé 32-bit en deux mots (registres Modbus) - Big Endian"""
+        # Pack the 32-bit int as 4 bytes (big-endian)
+        packed = struct.pack('>I', u32_value)
 
-    def update_registers(self, address, value):
-        """Met à jour les registres avec de nouvelles valeurs."""
-        self.data_registers[address] = value
+        # Unpack those bytes into two 16-bit big-endian words
+        reg_high, reg_low = struct.unpack('>HH', packed)
+        return DataHandler.Return(0, [reg_high, reg_low])
+    
+    def u16_to_modbus_registers(self, u16_value) -> DataHandler.Return:
+        """Convertit un entier non signé 16-bit en deux mots (registres Modbus) - Big Endian"""
 
-    def get_registers(self, address, length):
+        assert 0 <= u16_value <= 0xFFFF, "La valeur doit être un entier non signé de 16 bits."
+        return DataHandler.Return(0, [u16_value])
+
+    def update_registers(self, address, value, value_type='u32'):
+        # value_type peut être 'u32', 'u16' ou 'f32' (float)
+        self.data_registers[address] = [value, value_type]
+
+    def get_registers(self, address: int):
         """Récupère les registres demandés par le Maître Modbus."""
         
-        # Gérer le cas des floats 32-bit (2 registres)
-        if address in self.data_registers and length == 2:
-            float_value = self.data_registers[address]
-            return self.float_to_modbus_registers(float_value)
+        if address in self.data_registers:
+            value, val_size = self.data_registers[address]
+            print(f"Getting registers for address {address}: value={value}, type={val_size}")
+            if val_size == 'f32':
+                return self.float_to_modbus_registers(value)
+            elif val_size == 'u16':
+                return self.u16_to_modbus_registers(value)
+            elif val_size == 'u32':
+                return self.u32_to_modbus_registers(value)
+            else:
+                raise ValueError(f"Type de valeur inconnu: {val_size}")
         
         # Gérer le cas où l'adresse n'est pas connue
         raise ValueError(f"Adresse {address} non reconnue ou nombre de registres incorrect.")
@@ -85,32 +111,16 @@ class CustomDataHandler(DataHandler):
         super().__init__()
         self.simulator = simulator
 
-    def read_holding_registers(self, address: int, count: int, unit_id: int) -> List[int]:
+    def read_h_regs(self, address: int, count: int, unit_id: ModbusServer.ServerInfo):
         """
         Intercepte la requête de lecture des registres de maintien (Fonction 0x03).
         """
-        
-        # 1. Vérifie l'UNIT_ID
-        if unit_id != self.simulator.unit_id:
-            print(f"Erreur: UNIT_ID {unit_id} incorrecte (attendu {self.simulator.unit_id})")
-            return super().read_holding_registers(address, count, unit_id)
 
-        # 2. Vérifie si l'adresse est celle que nous gérons (1000)
-        if address == REGISTRE_ENERGIE:
-            try:
-                # Récupère les registres de l'instance SenderBot
-                registers = self.simulator.get_registers(address, count)
-                
-                # Optionnel: Simulation de l'incrémentation de l'énergie pour le prochain tick
-                # Ceci simule le temps qui passe
-                self.simulator.data_registers[REGISTRE_ENERGIE] += (POWER_AVERAGE / 3600) # + Power par seconde
-                
-                print(f"[{time.strftime('%H:%M:%S')}] Lecture OK de l'UNIT_ID {unit_id}, Reg {address}. Valeur float envoyée: {self.simulator.data_registers[REGISTRE_ENERGIE]:.2f} kWh")
-                return registers
-            
-            except ValueError as e:
-                print(f"Erreur interne lors de la lecture: {e}")
-                return super().read_holding_registers(address, count, unit_id)
+        print(address, self.simulator.data_registers)
+        try:
+            registers = self.simulator.get_registers(address)
 
-        # 3. Pour toute autre adresse, retourne l'erreur par défaut
-        return super().read_holding_registers(address, count, unit_id)
+            return registers
+        except ValueError as e:
+            print(f"Erreur interne lors de la lecture: {e}")
+            return super().read_h_regs(address, count, unit_id)

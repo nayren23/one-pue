@@ -5,7 +5,7 @@
 ###########################################
 
 # ---------------- Imports --------------- #
-from sender_bot import SenderBot, CustomDataHandler
+from sender_bot import SenderBot, CustomDataHandler, REGISTRE_ENERGIE, REGISTRE_ENERGIE_FRAC
 import pyModbusTCP
 import random
 import time
@@ -14,23 +14,19 @@ from pyModbusTCP.server import ModbusServer, DataHandler
 from typing import Dict, Any, List
 
 # ----------- Constants ------------------ #
-MODBUS_HOST = "172.18.146.98"
-MODBUS_PORT = 502
+MODBUS_HOST = "10.123.173.118"
+MODBUS_PORT = 5555
 MODBUS_UNIT_ID = 1
 POWER_AVERAGE = 450
-POWER_BASE_VALUE = POWER_AVERAGE * 24 * 365
+POWER_BASE_VALUE = 1.5
 
-# -----------  Functions ----------------- #
-
-
-
-# --------------- Main Logic -------------- #
 
 if __name__ == "__main__":
     
     # créer une instance de SenderBot
     DirisA40 = SenderBot(name="Diris A40", host=MODBUS_HOST, port=MODBUS_PORT, unit_id=MODBUS_UNIT_ID)
-    DirisA40.update_registers(address=1000, value=POWER_BASE_VALUE)  # Energy value at address 1000
+    DirisA40.update_registers(address=REGISTRE_ENERGIE, value=int(str(POWER_BASE_VALUE).split('.')[0]), value_type='u32')
+    DirisA40.update_registers(address=REGISTRE_ENERGIE_FRAC, value=int(str(POWER_BASE_VALUE).split('.')[-1]), value_type='u16')
     print(DirisA40)
 
     # Création du gestionnaire de données
@@ -54,3 +50,4 @@ if __name__ == "__main__":
     # Boucle principale pour maintenir le serveur en vie
     while True:
         time.sleep(1)
+        self.simulator.data_registers[REGISTRE_ENERGIE][0] += int(POWER_AVERAGE / 3600)
