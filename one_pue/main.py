@@ -1,4 +1,5 @@
 """Lanceur"""
+
 import time
 
 from one_pue.controller import Controller

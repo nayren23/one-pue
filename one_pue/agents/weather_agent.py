@@ -1,6 +1,5 @@
 """Agent pour récupérer les données météo"""
 
-# weather_agent.py
 from datetime import datetime
 import requests
 from one_pue.agent import Agent
@@ -10,16 +9,15 @@ class WeatherAgent(Agent):
     """Classe fille pour récupérer la météo (température horaire)."""
 
     # Ajouter constructeur pour set tout sauf value
-    def __init__(self, interval, name, agent_type, metric_type):
+    def __init__(self, name, metric_type):
         """
-        interval : intervalle de mise à jour (s ou min)
         name     : nom de l'agent (ex: 'Station Berlin')
         type     : type d'agent (ex: 'Weather Agent')
         metric_type     : metric_type (ex: 'Puissance')
         date     : date associée (string 'YYYY-MM-DD' ou ISO)
         latitude/longitude : position utilisée pour l'appel API
         """
-        super().__init__(interval, name, agent_type, metric_type)
+        super().__init__(name, metric_type)
 
         self.latitude = 52.52
         self.longitude = 13.41
