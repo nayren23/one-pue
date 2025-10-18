@@ -72,19 +72,23 @@
         <h2>Créer un Agent</h2>
 
         <label for="name">Nom :</label>
-        <input type="text" id="name" name="name" required>
+        <input type="text" id="name" name="name" placeholder="global_energy_meter" required>
 
-        <label for="metric_type">Type de métrique :</label>
-        <input type="text" id="metric_type" name="metric_type" required>
+        <label for="description">Description :</label>
+        <input type="text" id="description" name="description" placeholder="Temperature outside the datacenter in C"
+            required>
 
         <label for="modbus_host">Hôte Modbus :</label>
-        <input type="text" id="modbus_host" name="modbus_host" required>
+        <input type="text" id="modbus_host" name="modbus_host" placeholder="172.18.146.98" required>
 
         <label for="modbus_port">Port :</label>
-        <input type="number" id="modbus_port" name="modbus_port" required>
+        <input type="number" id="modbus_port" name="modbus_port" placeholder="5555" required>
 
-        <label for="modbus_register">Register :</label>
-        <input type="number" id="modbus_register" name="modbus_register" required>
+        <label for="modbus_register_1">Register 1 :</label>
+        <input id="modbus_register_1" name="modbus_register_1" placeholder="0x4D83" required>
+
+        <label for="modbus_register_2">Register 2 :</label>
+        <input id="modbus_register_2" name="modbus_register_2" placeholder="0x4D85" required>
 
         <button type="submit">Enregistrer</button>
         <a href="{{ url_for('agent.list_agents') }}">← Retour à la liste</a>

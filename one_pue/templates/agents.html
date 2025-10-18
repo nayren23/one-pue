@@ -98,7 +98,7 @@
             <thead>
                 <tr>
                     <th>Nom</th>
-                    <th>Type de métrique</th>
+                    <th>Description</th>
                     <th>Hôte Modbus</th>
                     <th>Port</th>
                     <th>Register</th>
@@ -108,7 +108,7 @@
                 {% for agent in agents %}
                 <tr>
                     <td>{{ agent.name }}</td>
-                    <td>{{ agent.metric_type }}</td>
+                    <td>{{ agent.description }}</td>
                     <td>{{ agent.modbus_host }}</td>
                     <td>{{ agent.modbus_port }}</td>
                     <td>{{ agent.modbus_register }}</td>

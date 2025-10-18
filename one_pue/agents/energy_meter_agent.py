@@ -11,15 +11,8 @@ class EnergyMeterAgent(Agent):
     modbus_register: list
 
     # Ajouter constructeur pour set tout sauf value
-    def __init__(self, name, metric_type, modbus_host, modbus_port, modbus_register):
-        """
-        name     : nom de l'agent (ex: 'Station Berlin')
-        type     : type d'agent (ex: 'Weather Agent')
-        metric_type     : Type métrique (ex: 'Puissance')
-        time     : heure associée (string 'HH:MM:SS' ou ISO)
-        latitude/longitude : position utilisée pour l'appel API
-        """
-        super().__init__(name, metric_type)
+    def __init__(self, modbus_host, modbus_port, modbus_register):
+        """ """
         self.modbus_host = modbus_host
         self.modbus_port = modbus_port
         self.modbus_register = modbus_register
@@ -37,4 +30,15 @@ class EnergyMeterAgent(Agent):
 
     def format_value_modbus(self, first_regs, second_regs):
         """Format de la valeur récupérer via modbus poru la mettre dans le bon format"""
+        print("Affichage regs")
+        print(first_regs)
+        print(second_regs)
         return s.unpack(">I", s.pack(">HH", *first_regs))[0] + second_regs[0] / 10000
+
+    # Getter pour modbus_port
+    def get_modbus_port(self):
+        return self.modbus_port
+
+    # Getter pour modbus_register
+    def get_modbus_register(self):
+        return self.modbus_register

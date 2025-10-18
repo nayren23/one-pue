@@ -2,8 +2,8 @@
 
 import time
 from flask import Flask, render_template, request, redirect, url_for, jsonify, Blueprint
-import os
 import json
+from prometheus_client.registry import REGISTRY
 
 from one_pue.controller import Controller
 
@@ -22,47 +22,52 @@ if __name__ == "__main__":
         response = jsonify(message="REFRESHED_SUCCESSFULLY")
         return response, 200
 
-    def load_agents():
-        """Lire les agents depuis le fichier JSON."""
-        if not os.path.exists(DATA_FILE):
-            return []
-        with open(DATA_FILE, "r") as f:
-            try:
-                return json.load(f)
-            except json.JSONDecodeError:
-                return []
-
     @agent.route("/all")
     def list_agents():
-        return render_template("agents.html", agents=load_agents())
+        return render_template("agents.html", agents=controller.load_agents())
 
     def save_agents(agents):
         """Écrire la liste des agents dans le fichier JSON."""
         with open(DATA_FILE, "w") as f:
             json.dump(agents, f, indent=4)
+        controller.stop_prometheus_client()
+        for gage in controller.get_gauge_list():
+            REGISTRY.unregister(gage)
+        agents = controller.load_agents()
+        for a in agents:
+            controller.create_agent_gauge(
+                a["name"],
+                a["description"],
+                a["modbus_host"],
+                a["modbus_port"],
+                a["modbus_register"],
+            )
+        controller.start_prometheus_client()
 
     @agent.route("/create", methods=["GET", "POST"])
     def create_agent():
         if request.method == "POST":
-            name = request.form["name"]
-            metric_type = request.form["metric_type"]
+            name = request.form["name"].strip().lower().replace(" ", "_")
+            description = request.form["description"]
             modbus_host = request.form["modbus_host"]
             modbus_port = int(request.form["modbus_port"])
-            modbus_register = int(request.form["modbus_register"])
+            print("iciiiii")
+            print(request.form)
+            modbus_register_1 = int(request.form["modbus_register_1"], 16)
+            modbus_register_2 = int(request.form["modbus_register_2"], 16)
+            modbus_register = [modbus_register_1, modbus_register_2]
 
-            agents = load_agents()
+            agents = controller.load_agents()
             agents.append(
                 {
                     "name": name,
-                    "metric_type": metric_type,
+                    "description": description,
                     "modbus_host": modbus_host,
                     "modbus_port": modbus_port,
                     "modbus_register": modbus_register,
                 }
             )
             save_agents(agents)
-
-            # ✅ Endpoint du blueprint : "agent.list_agents"
             return redirect(url_for("agent.list_agents"))
 
         return render_template("create_agent.html")

@@ -1,44 +1,32 @@
 [
     {
-        "name": "Agent 1",
-        "metric_type": "Temperature",
-        "modbus_host": "192.168.1.10",
-        "modbus_port": 502,
-        "modbus_register": 1001
+        "name": "global_energy_meter",
+        "description": "Total energy consummed by the datacenter in kWh",
+        "modbus_host": "10.185.102.252",
+        "modbus_port": 5555,
+        "modbus_register": [
+            19843,
+            19845
+        ]
     },
     {
-        "name": "Agent 2",
-        "metric_type": "Rayan",
-        "modbus_host": "192.168.1.11",
-        "modbus_port": 502,
-        "modbus_register": 1002
+        "name": "it_energy_meter",
+        "description": "Total energy consumption by the PDU in kWh",
+        "modbus_host": "10.185.102.252",
+        "modbus_port": 5556,
+        "modbus_register": [
+            4096,
+            4098
+        ]
     },
     {
-        "name": "test",
-        "metric_type": "temp\u00e9rature",
-        "modbus_host": "192.168.1.23",
-        "modbus_port": 5223,
-        "modbus_register": 10023
-    },
-    {
-        "name": "puissance",
-        "metric_type": "humidit\u00e9",
-        "modbus_host": "522312",
-        "modbus_port": 5400,
-        "modbus_register": 18
-    },
-    {
-        "name": "puissnace",
-        "metric_type": "energie",
-        "modbus_host": "5890",
-        "modbus_port": 54,
-        "modbus_register": 1878
-    },
-    {
-        "name": "volt",
-        "metric_type": "desctipotn",
-        "modbus_host": "5078",
-        "modbus_port": 79,
-        "modbus_register": 47856354
+        "name": "group_froid_1_consumption",
+        "description": "Total energy consumption by the  groupe_froid in kWh",
+        "modbus_host": "10.185.102.252",
+        "modbus_port": 5557,
+        "modbus_register": [
+            16640,
+            16642
+        ]
     }
 ]

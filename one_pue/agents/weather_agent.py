@@ -9,15 +9,10 @@ class WeatherAgent(Agent):
     """Classe fille pour récupérer la météo (température horaire)."""
 
     # Ajouter constructeur pour set tout sauf value
-    def __init__(self, name, metric_type):
+    def __init__(self):
         """
-        name     : nom de l'agent (ex: 'Station Berlin')
-        type     : type d'agent (ex: 'Weather Agent')
-        metric_type     : metric_type (ex: 'Puissance')
-        date     : date associée (string 'YYYY-MM-DD' ou ISO)
         latitude/longitude : position utilisée pour l'appel API
         """
-        super().__init__(name, metric_type)
 
         self.latitude = 52.52
         self.longitude = 13.41
