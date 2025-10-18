@@ -13,11 +13,11 @@ class Controller:
         weather_gauge = Gauge("exterior_temperature", "Temperature outside the datacenter in C°")
         weather_gauge.set_function(lambda: weather_agent.get_weather_temperature())
 
-        tgbt_agent = EnergyMeterAgent("tgbt_agent", "puissance", "192.168.1.83", 5555, [0x4D83, 0x4D85])
+        tgbt_agent = EnergyMeterAgent("tgbt_agent", "puissance", "172.18.146.98", 5555, [0x4D83, 0x4D85])
         tgbt_gauge = Gauge("global_energy_meter", "Total energy consummed by the datacenter in kWh")
         tgbt_gauge.set_function(lambda: tgbt_agent.get_global_energy_meter())
 
-        pdu_agent = EnergyMeterAgent("pdu_agent", "puissance", "192.168.1.83", 5556, [0x1000, 0x1002])
+        pdu_agent = EnergyMeterAgent("pdu_agent", "puissance", "172.18.146.98", 5556, [0x1000, 0x1002])
         pdu_gauge = Gauge("energy_consumption", "Total energy consumption by the PDU in kWh")
         pdu_gauge.set_function(lambda: pdu_agent.get_global_energy_meter())
 

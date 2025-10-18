@@ -17,7 +17,9 @@ dependencies = [
   "requests",
   "setuptools",
   "pyModbusTCP",
-  "prometheus_client"]
+  "prometheus_client",
+  "flask",
+  "flask_restful"]
 
 [project.optional-dependencies]
 dev = [
