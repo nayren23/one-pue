@@ -6,22 +6,10 @@
 
 # ---------------- Imports --------------- #
 import pyModbusTCP
-import random
 import time
 import struct
 from pyModbusTCP.server import ModbusServer, DataHandler
-from typing import Dict, Any, List
-
-# ----------- Constants ------------------ #
-MODBUS_HOST = "172.18.146.98"
-MODBUS_PORT = 502
-MODBUS_UNIT_ID = 1
-POWER_AVERAGE = 450
-POWER_BASE_VALUE = POWER_AVERAGE * 24 * 365
-# Size: 32 bits
-REGISTRE_ENERGIE = 0x4D83
-# Size: 16 bits
-REGISTRE_ENERGIE_FRAC = 0x4D85
+from CONSTANTS import *
 
 # ---------- Sender Bot Class ------------ #
 
@@ -38,6 +26,8 @@ class SenderBot:
         self.unit_id = unit_id
         self.inital_tick = time.time()
         self.data_registers = {}
+        self.modbus_server = None
+        self.modbus_handler = None
 
 
     def __str__(self):

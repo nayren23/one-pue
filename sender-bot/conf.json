@@ -1,0 +1,76 @@
+{
+  "host": "172.18.146.98",
+  "capteurs": [
+    {
+      "nom": "DIRIS A40",
+      "port": 5555,
+      "unit_id": 1,
+      "simulation_parametres": {
+        "average_value": 450,
+        "fluctuation": 0.10
+      },
+      "registres": [
+        {
+          "nom": "REGISTRE_ENERGIE",
+          "adresse": 19843,
+          "taille": "u32",
+          "base_value": 3942000
+        },
+        {
+          "nom": "REGISTRE_ENERGIE_FRAC",
+          "adresse": 19845,
+          "taille": "u16",
+          "base_value": 0
+        }
+      ]
+    },
+    {
+      "nom": "PDU Schneider",
+      "port": 5556,
+      "unit_id": 2,
+      "simulation_parametres": {
+        "average_value": 200,
+        "base_value": 1752000,
+        "fluctuation": 0.13
+      },
+      "registres": [
+        {
+          "nom": "REGISTRE_PDU_ENERGIE",
+          "adresse": 4096,
+          "taille": "u32",
+          "base_value": 1752000
+        },
+        {
+          "nom": "REGISTRE_PDU_ENERGIE_FRAC",
+          "adresse": 4098,
+          "taille": "u16",
+          "base_value": 0
+        }
+      ]
+    },
+    {
+      "nom": "Group froid 1",
+      "port": 5557,
+      "unit_id": 3,
+      "simulation_parametres": {
+        "average_value": 25,
+        "base_value": 175200,
+        "fluctuation": 0.08
+      },
+      "registres": [
+        {
+          "nom": "REGISTRE_PDU_ENERGIE",
+          "adresse": 4100,
+          "taille": "u32",
+          "base_value": 275200
+        },
+        {
+          "nom": "REGISTRE_PDU_ENERGIE_FRAC",
+          "adresse": 4102,
+          "taille": "u16",
+          "base_value": 0
+        }
+      ]
+    }
+  ]
+}
