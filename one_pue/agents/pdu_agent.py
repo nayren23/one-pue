@@ -1,11 +1,11 @@
-"""Agent pour récupérer les données du capteur TGBT"""
+"""Agent pour récupérer les données du capteur PDU"""
 
 # weather_agent.py
 from one_pue.agent import Agent
 
 
-class TgbtAgent(Agent):
-    """Classe fille pour récupérer la météo (température horaire)."""
+class PduAgent(Agent):
+    """Classe fille pour récupérer les infos du PDU"""
 
     # Ajouter constructeur pour set tout sauf value
     def __init__(self, interval, name, agent_type, metric_type, modbus_host):
@@ -20,11 +20,11 @@ class TgbtAgent(Agent):
         super().__init__(interval, name, agent_type, metric_type)
         self.modbus_host = modbus_host
 
-    def get_global_energy_meter(self):
+    def get_energy_consumption(self):
         """Récupération de l'energie globale grace au modbus"""
-        self.modbus_client = self.init_modbus_connection(5555)  # intialisation connexion
-        first_regs = self.modbus_client.read_holding_registers(0x4D83, 2)
-        second_regs = self.modbus_client.read_holding_registers(0x4D85, 1)  # 0x1002
+        self.modbus_client = self.init_modbus_connection(5556)  # intialisation connexion
+        first_regs = self.modbus_client.read_holding_registers(0x1000, 2)
+        second_regs = self.modbus_client.read_holding_registers(0x1002, 1)
         value = self.format_value_modbus(first_regs, second_regs)
         if first_regs and second_regs:
             return value

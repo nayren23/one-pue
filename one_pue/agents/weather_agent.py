@@ -4,7 +4,6 @@
 from datetime import datetime
 import requests
 from one_pue.agent import Agent
-from one_pue.agent_dto import AgentDTO
 
 
 class WeatherAgent(Agent):
@@ -25,7 +24,7 @@ class WeatherAgent(Agent):
         self.latitude = 52.52
         self.longitude = 13.41
 
-    def get_data(self):
+    def get_weather_temperature(self):
         """
         Récupère la température horaire via Open-Meteo et retourne un AgentDTO.
         Si l'API échoue, value sera None et time/date resteront ceux de l'instance.
